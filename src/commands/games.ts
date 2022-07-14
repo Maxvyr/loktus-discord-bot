@@ -1,4 +1,9 @@
-import { BaseCommandInteraction, Client } from "discord.js";
+import {
+  BaseCommandInteraction,
+  Client,
+  EmbedFieldData,
+  MessageEmbed,
+} from "discord.js";
 import axios from "axios";
 import { Command } from "../command";
 import dotenv from "dotenv";
@@ -10,7 +15,7 @@ export const Games: Command = {
   type: "CHAT_INPUT",
   run: async (client: Client, interaction: BaseCommandInteraction) => {
     try {
-      console.log(client.emojis);
+      console.log("interaction.options.get(", interaction.client);
 
       const url = `https://whatoplay.p.rapidapi.com/search?game=Dota`;
       //   const url = `https://whatoplay.p.rapidapi.com/search?game=${client.addListener.arguments}`;
@@ -25,18 +30,34 @@ export const Games: Command = {
       });
 
       const result: [GameType] = res.data;
-    //   result.forEach((element: GameType) => {
-    //     const gameTitle = element.game_name;
-    //     console.log(element.game_name, element.developer);
-    //     console.log("----------");
-    //   });
+      //   result.forEach((element: GameType) => {
+      //     const gameTitle = element.game_name;
+      //     console.log(element.game_name, element.developer);
+      //     console.log("----------");
+      //   });
 
       const content: string =
         result[0].game_name + " -- " + result[0].game_themes;
 
+      const embedFieldData: EmbedFieldData = {
+        name: "latence",
+        value: `${client.ws.ping}ms`,
+        inline: true,
+      };
+
+      const embed = new MessageEmbed()
+        .setTitle(result[0].game_name)
+        .setURL("https://maxvyr.com")
+        .setTimestamp()
+        .setFooter({
+          text: "x",
+          iconURL: client.user?.displayAvatarURL(),
+        })
+        .addFields([embedFieldData]);
+
       await interaction.followUp({
         ephemeral: true,
-        content,
+        embeds: [embed],
       });
     } catch (error) {
       console.error("Error call ", error);
