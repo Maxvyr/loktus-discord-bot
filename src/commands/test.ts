@@ -31,7 +31,6 @@ export const Test: Command = {
     const evtChoices = interaction.options.get("event");
 
     if (evtChoices != null) {
-      //TODO don't work for now
       if (evtChoices.value === "one") {
         client.emit("one", interaction.member);
 
